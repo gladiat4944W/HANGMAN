@@ -1,0 +1,115 @@
+import pygame
+import sys
+import random
+
+pygame.init()
+screen = pygame.display.set_mode((800, 550))
+pygame.display.set_caption("Hangman!")
+yellow = (244,180,26)
+blue = (20,61,89)
+title_font = pygame.font.Font("font1.ttf", 70)
+inst_font = pygame.font.Font("font2.ttf", 40)
+word_font = pygame.font.Font("font2.ttf", 60)
+small_font = pygame.font.Font("font2.ttf", 30)
+hint_font = pygame.font.Font("font2.ttf", 25)
+
+# Word dictionary with hints
+word_hints = {
+    "biscuit": "A crunchy baked snack, often served with tea",
+    "brownie": "A chocolate square dessert, soft and fudgy",
+    "almonds": "Nutritious tree nuts, often used in baking"
+}
+
+words = list(word_hints.keys())
+word = random.choice(words)
+current_hint = word_hints[word]
+guessed = []
+lives = 6
+score = 0
+game_over = False
+
+def draw_hangman(lives):
+    if lives <= 5:  
+        pygame.draw.circle(screen, blue, (150, 150), 20, 3)
+    if lives <= 4:  
+        pygame.draw.line(screen, blue, (150, 170), (150, 250), 3)
+    if lives <= 3:  
+        pygame.draw.line(screen, blue, (150, 190), (100, 220), 3)
+    if lives <= 2:  
+        pygame.draw.line(screen, blue, (150, 190), (200, 220), 3)
+    if lives <= 1:  
+        pygame.draw.line(screen, blue, (150, 250), (100, 300), 3)
+    if lives <= 0:  
+        pygame.draw.line(screen, blue, (150, 250), (200, 300), 3)
+
+while True:
+    allevents = pygame.event.get()
+    for myevent in allevents:
+        if myevent.type == pygame.QUIT:
+            sys.exit()
+        if myevent.type == pygame.KEYDOWN and not game_over:
+            if myevent.unicode.isalpha():
+                letter = myevent.unicode.lower()
+                if letter not in guessed:
+                    guessed.append(letter)
+                    if letter not in word:
+                        lives -= 1
+    
+    screen.fill(yellow)
+    
+    # Draw gallows
+    pygame.draw.line(screen, blue, (50, 350), (250, 350), 5)
+    pygame.draw.line(screen, blue, (150, 350), (150, 100), 5)
+    pygame.draw.line(screen, blue, (150, 100), (150, 130), 5)
+    
+    draw_hangman(lives)
+    
+    text = title_font.render("HANGMAN", True, blue)
+    screen.blit(text, (300, 50))
+    
+    lives_text = small_font.render(f"Lives: {lives}", True, blue)
+    score_text = small_font.render(f"Score: {score}", True, blue)
+    screen.blit(lives_text, (50, 400))
+    screen.blit(score_text, (50, 450))
+    
+    # Display word
+    display_word = ""
+    won = True
+    for ch in word:
+        if ch in guessed:
+            display_word += ch + " "
+        else:
+            display_word += "- "
+            won = False
+            
+    text = word_font.render(display_word, True, blue)
+    screen.blit(text, (300, 200))
+    
+    # Display guessed letters
+    guessed_text = small_font.render(f"Guessed: {' '.join(sorted(guessed))}", True, blue)
+    screen.blit(guessed_text, (300, 400))
+
+    # Display hint
+    hint_text = hint_font.render(f"HINT: {current_hint}", True, blue)
+    screen.blit(hint_text, (50, 500))
+    
+    if won and not game_over:
+        game_over = True
+        score += 100
+        win_text = inst_font.render("YOU WIN! Press SPACE to play again", True, blue)
+        screen.blit(win_text, (200, 300))
+    elif lives <= 0 and not game_over:
+        game_over = True
+        lose_text = inst_font.render(f"GAME OVER! The word was: {word}", True, blue)
+        screen.blit(lose_text, (200, 300))
+    
+    if game_over:
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE]:
+            word = random.choice(words)
+            current_hint = word_hints[word]
+            guessed = []
+            lives = 6
+            game_over = False
+    
+    pygame.display.flip()
