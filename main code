@@ -85,9 +85,15 @@ while True:
     text = word_font.render(display_word, True, blue)
     screen.blit(text, (300, 200))
     
-    # Display guessed letters
-    guessed_text = small_font.render(f"Guessed: {' '.join(sorted(guessed))}", True, blue)
-    screen.blit(guessed_text, (300, 400))
+    if won:
+        game_over = True
+        score = 100
+        win_text = inst_font.render("YOU WIN! Press SPACE to play again", True, blue)
+        screen.blit(win_text, (200, 300))
+        victory_text = inst_font.render("CONGRATULATIONS!", True, (34, 139, 34))
+        screen.blit(victory_text, (300, 350))
+        bonus_text = inst_font.render("+100 points!", True, (34, 139, 34))
+        screen.blit(bonus_text, (300, 400))
 
     # Display hint
     hint_text = hint_font.render(f"HINT: {current_hint}", True, blue)
@@ -95,13 +101,20 @@ while True:
     
     if won and not game_over:
         game_over = True
-        score += 100
         win_text = inst_font.render("YOU WIN! Press SPACE to play again", True, blue)
         screen.blit(win_text, (200, 300))
+        victory_text = inst_font.render("CONGRATULATIONS!", True, (34, 139, 34))
+        screen.blit(victory_text, (300, 350))
+        bonus_text = inst_font.render("+100 points!", True, (34, 139, 34))
+        screen.blit(bonus_text, (300, 400))
     elif lives <= 0 and not game_over:
         game_over = True
         lose_text = inst_font.render(f"GAME OVER! The word was: {word}", True, blue)
         screen.blit(lose_text, (200, 300))
+        game_over_text = inst_font.render("Better luck next time!", True, (178, 34, 34))
+        screen.blit(game_over_text, (300, 350))
+        retry_text = inst_font.render("Press SPACE to try again", True, (178, 34, 34))
+        screen.blit(retry_text, (300, 400))
     
     if game_over:
         keys = pygame.key.get_pressed()
@@ -112,4 +125,8 @@ while True:
             lives = 6
             game_over = False
     
-    pygame.display.flip()
+    try:
+        pygame.display.flip()
+    except KeyboardInterrupt:
+        pygame.quit()
+        sys.exit()
