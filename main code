@@ -3,7 +3,7 @@ import sys
 import random
 
 pygame.init()
-screen = pygame.display.set_mode((800, 550))
+screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Hangman!")
 yellow = (244,180,26)
 blue = (20,61,89)
@@ -17,7 +17,24 @@ hint_font = pygame.font.Font("font2.ttf", 25)
 word_hints = {
     "biscuit": "A crunchy baked snack, often served with tea",
     "brownie": "A chocolate square dessert, soft and fudgy",
-    "almonds": "Nutritious tree nuts, often used in baking"
+    "almonds": "Nutritious tree nuts, often used in baking",
+    "pancake": "Flat breakfast favorite topped with syrup",
+    "waffle": "Grid-patterned breakfast treat",
+    "custard": "Creamy dessert made with eggs and milk",
+    "muffins": "Small round breakfast cakes",
+    "cookies": "Sweet circular treats, often with chocolate chips",
+    "pudding": "Soft creamy dessert that comes in many flavors",
+    "pastry": "Flaky baked dough used in many desserts",
+    "cupcake": "Individual-sized frosted cake",
+    "donut": "Ring-shaped fried dough with a hole in middle",
+    "pretzel": "Twisted salty snack",
+    "popcorn": "Snack that expands when heated",
+    "noodles": "Long strands of pasta",
+    "pizza": "Round flatbread with toppings and cheese",
+    "burger": "Sandwich with a meat patty",
+    "sushi": "Japanese dish with rice and seafood",
+    "taco": "Mexican folded tortilla with fillings",
+    "pasta": "Italian dish made from wheat dough"
 }
 
 words = list(word_hints.keys())
@@ -94,20 +111,20 @@ while True:
         screen.blit(victory_text, (300, 350))
         bonus_text = inst_font.render("+100 points!", True, (34, 139, 34))
         screen.blit(bonus_text, (300, 400))
-
     # Display hint
     hint_text = hint_font.render(f"HINT: {current_hint}", True, blue)
     screen.blit(hint_text, (50, 500))
     
     if won and not game_over:
         game_over = True
+        score = 100
         win_text = inst_font.render("YOU WIN! Press SPACE to play again", True, blue)
         screen.blit(win_text, (200, 300))
         victory_text = inst_font.render("CONGRATULATIONS!", True, (34, 139, 34))
         screen.blit(victory_text, (300, 350))
         bonus_text = inst_font.render("+100 points!", True, (34, 139, 34))
         screen.blit(bonus_text, (300, 400))
-    elif lives <= 0 and not game_over:
+    elif lives == 0 :
         game_over = True
         lose_text = inst_font.render(f"GAME OVER! The word was: {word}", True, blue)
         screen.blit(lose_text, (200, 300))
@@ -123,6 +140,7 @@ while True:
             current_hint = word_hints[word]
             guessed = []
             lives = 6
+            score = 0
             game_over = False
     
     try:
